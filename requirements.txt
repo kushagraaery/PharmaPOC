@@ -4,5 +4,3 @@ pandas
 xlsxwriter
 python-dotenv
 openpyxl
-smtplib
-email
