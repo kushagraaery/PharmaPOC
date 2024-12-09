@@ -202,22 +202,22 @@ def dataframe_to_html(df):
 
 # Email Sending Interface
 if not st.session_state.report_data.empty:
-    st.write("📧 Email Report:")
+    # st.write("📧 Email Report:")
 
     # Collect email details from user input
-    receiver_email = st.text_input("Enter recipient email address:")
-    email_subject = st.text_input("Enter email subject:", value="Consolidated Pharma Society Report")
+    receiver_email = "ayush.rajput@incedoinc.com"
+    email_subject = "Consolidated Pharma Society Report"
 
     # Set Gmail SMTP server settings
     smtp_server = "smtp.gmail.com"  # Gmail SMTP server
-    smtp_port = st.selectbox("Select SMTP Port:", [465, 587], index=1)  # Choose SSL or TLS
+    smtp_port = 587  # Choose SSL or TLS
 
     # Set your sender email here (e.g., your Gmail)
-    sender_email = st.text_input("Enter your Gmail address:")
-    sender_password = st.text_input("Enter your Gmail password (or App Password):", type="password")
+    sender_email = "johnwickcrayons@gmail.com"
+    sender_password = "afpt eoyt asaq qzjh"
 
     # Send email if button clicked
-    if st.button("Send Email"):
+    if st.button("Send data to Google Sheets"):
         if receiver_email and email_subject and sender_email and sender_password:
             html_table = dataframe_to_html(st.session_state.report_data)
             email_body = f"""
@@ -257,11 +257,9 @@ if not st.session_state.report_data.empty:
 
             # Display success or error message
             if "successfully" in status:
-                st.success(status)
+                st.success("Successfully sent data to Google Sheets!")
             else:
-                st.error(f"Error: {status}")
-        else:
-            st.error("Please fill in all required fields (email details and SMTP server).")
+                st.error("Error while appending data to Google Sheets!")
 
 # Header section
 st.markdown('<div class="main-header">💬 Pharma Insights Chatbot </div>', unsafe_allow_html=True)
@@ -433,7 +431,7 @@ def generate_openai_response(query, report_context):
         prompt = f"""
          You are an AI assistant fine-tuned to answer questions based on a pharmaceutical society consolidated report. 
          Use the following report data to answer user queries accurately if the information exists in the report.
-         If the query cannot be answered using the report, respond using your general knowledge:
+         If the query cannot be answered using the report, respond using your general knowledge i.e. using chat-gpt model:
         
         {report_context}
         
@@ -443,12 +441,28 @@ def generate_openai_response(query, report_context):
         """
         # Call OpenAI API
         response = openai.ChatCompletion.create(
+            #   model="gpt-4",
             model="gpt-3.5-turbo",
             messages=[{"role": "system", "content": prompt}]
         )
         return response.choices[0]["message"]["content"].strip()
     except Exception as e:
         return f"Error generating response: {e}"
+
+# Predefined Prompt Buttons in a grid
+st.markdown('<div class="prompt-buttons">', unsafe_allow_html=True)
+cols = st.columns(3)
+
+with cols[0]:
+    if st.button("List down all the societies inside the Report."):
+        chat_input_2 = "List down all the societies inside the Report."
+with cols[1]:
+    if st.button("Which Society do you think is the best out of all and why?"):
+        chat_input_2 = "Which Society do you think is the best out of all and why?"
+with cols[2]:
+    if st.button("Tell me the society names with highest and lowest count of membership."):
+        chat_input_2 = "Tell me the society names with highest and lowest count of membership."
+st.markdown('</div>', unsafe_allow_html=True)
 
 # Process Chatbot 2.0 input
 if chat_input_2:
